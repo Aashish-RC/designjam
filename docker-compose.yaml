@@ -1,0 +1,6 @@
+# Direct pointer to Enterprise Stack
+# Run: docker compose up -d
+
+include:
+  - path: docker/enterprise/docker-compose.enterprise.yaml
+    env_file: docker/enterprise/.env.enterprise

@@ -1,0 +1,191 @@
+# ==============================================================================
+# PENPOT ENTERPRISE PLATFORM DOCKER COMPOSE ORCHESTRATION
+# Enterprise-grade stack configured for multi-tenant, secure, high-concurrency design
+# ==============================================================================
+
+x-flags: &penpot-flags
+  PENPOT_FLAGS: >-
+    disable-email-verification
+    enable-smtp
+    enable-prepl-server
+    disable-secure-session-cookies
+    enable-mcp
+    login-with-password
+    login-with-oidc
+    login-with-ldap
+    webhooks
+
+x-uri: &penpot-public-uri
+  PENPOT_PUBLIC_URI: ${PENPOT_PUBLIC_URI:-http://localhost:9001}
+
+x-body-size: &penpot-http-body-size
+  PENPOT_HTTP_SERVER_MAX_BODY_SIZE: 524288000
+  PENPOT_HTTP_SERVER_MAX_MULTIPART_BODY_SIZE: 524288000
+
+x-secret-key: &penpot-secret-key
+  PENPOT_SECRET_KEY: ${PENPOT_SECRET_KEY:-change-this-insecure-enterprise-key-512bit-token}
+
+networks:
+  penpot-enterprise:
+    name: penpot-enterprise
+    driver: bridge
+
+volumes:
+  penpot_postgres_v15:
+    name: penpot_enterprise_postgres_v15
+  penpot_assets:
+    name: penpot_enterprise_assets
+  penpot_audit_logs:
+    name: penpot_enterprise_audit_logs
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. FRONTEND STUDIO & ADMIN CONSOLE PROXY
+  # ----------------------------------------------------------------------------
+  penpot-frontend:
+    image: "penpotapp/frontend:${PENPOT_VERSION:-2.17.2}"
+    container_name: penpot-enterprise-frontend
+    restart: always
+    ports:
+      - "${PENPOT_PORT:-9001}:8080"
+    volumes:
+      - penpot_assets:/opt/data/assets
+    depends_on:
+      - penpot-backend
+      - penpot-exporter
+      - penpot-mcp
+    networks:
+      - penpot-enterprise
+    environment:
+      << : [*penpot-flags, *penpot-http-body-size, *penpot-public-uri]
+      PENPOT_DEMO_USERS: "false"
+
+  # ----------------------------------------------------------------------------
+  # 2. ENTERPRISE BACKEND SERVICE (Clojure / Ring / Pedestal)
+  # ----------------------------------------------------------------------------
+  penpot-backend:
+    image: "penpotapp/backend:${PENPOT_VERSION:-2.17.2}"
+    container_name: penpot-enterprise-backend
+    restart: always
+    volumes:
+      - penpot_assets:/opt/data/assets
+    depends_on:
+      penpot-postgres:
+        condition: service_healthy
+      penpot-valkey:
+        condition: service_healthy
+    networks:
+      - penpot-enterprise
+    environment:
+      << : [*penpot-flags, *penpot-public-uri, *penpot-http-body-size, *penpot-secret-key]
+      
+      # Database
+      PENPOT_DATABASE_URI: postgresql://penpot-postgres/penpot
+      PENPOT_DATABASE_USERNAME: ${POSTGRES_USER:-penpot}
+      PENPOT_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-penpot}
+      PENPOT_DATABASE_MAX_POOL_SIZE: 30
+      
+      # Valkey / Redis
+      PENPOT_REDIS_URI: redis://penpot-valkey/0
+      
+      # Storage
+      PENPOT_OBJECTS_STORAGE_BACKEND: fs
+      PENPOT_OBJECTS_STORAGE_FS_DIRECTORY: /opt/data/assets
+      
+      # Enterprise Logging & Telemetry
+      PENPOT_TELEMETRY_ENABLED: "false"
+      
+      # SMTP Mail Services
+      PENPOT_SMTP_DEFAULT_FROM: ${PENPOT_SMTP_DEFAULT_FROM:-enterprise-noreply@penpot.local}
+      PENPOT_SMTP_DEFAULT_REPLY_TO: ${PENPOT_SMTP_DEFAULT_REPLY_TO:-enterprise-support@penpot.local}
+      PENPOT_SMTP_HOST: penpot-mailcatch
+      PENPOT_SMTP_PORT: 1025
+      PENPOT_SMTP_TLS: "false"
+      PENPOT_SMTP_SSL: "false"
+
+  # ----------------------------------------------------------------------------
+  # 3. AGENTIC AI & MODEL CONTEXT PROTOCOL (MCP) SERVICE
+  # ----------------------------------------------------------------------------
+  penpot-mcp:
+    image: "penpotapp/mcp:${PENPOT_VERSION:-2.17.2}"
+    container_name: penpot-enterprise-mcp
+    restart: always
+    networks:
+      - penpot-enterprise
+
+  # ----------------------------------------------------------------------------
+  # 4. EXPORTER SERVICE (Headless Chromium Export)
+  # ----------------------------------------------------------------------------
+  penpot-exporter:
+    image: "penpotapp/exporter:${PENPOT_VERSION:-2.17.2}"
+    container_name: penpot-enterprise-exporter
+    restart: always
+    depends_on:
+      penpot-valkey:
+        condition: service_healthy
+    networks:
+      - penpot-enterprise
+    environment:
+      << : [*penpot-secret-key, *penpot-public-uri]
+      PENPOT_INTERNAL_URI: http://penpot-frontend:8080
+      PENPOT_REDIS_URI: redis://penpot-valkey/0
+
+  # ----------------------------------------------------------------------------
+  # 5. POSTGRESQL 15+ RELATIONAL & DOCUMENT STORE
+  # ----------------------------------------------------------------------------
+  penpot-postgres:
+    image: "postgres:15-alpine"
+    container_name: penpot-enterprise-postgres
+    restart: always
+    stop_signal: SIGINT
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-penpot} -d penpot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - penpot_postgres_v15:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - penpot-enterprise
+    environment:
+      - POSTGRES_INITDB_ARGS=--data-checksums
+      - POSTGRES_DB=penpot
+      - POSTGRES_USER=${POSTGRES_USER:-penpot}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-penpot}
+
+  # ----------------------------------------------------------------------------
+  # 6. IN-MEMORY CACHE & REALTIME PUB/SUB (VALKEY 8)
+  # ----------------------------------------------------------------------------
+  penpot-valkey:
+    image: "valkey/valkey:8.1-alpine"
+    container_name: penpot-enterprise-valkey
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+    ports:
+      - "${VALKEY_PORT:-6379}:6379"
+    networks:
+      - penpot-enterprise
+    environment:
+      - VALKEY_EXTRA_FLAGS=--maxmemory 512mb --maxmemory-policy volatile-lfu
+
+  # ----------------------------------------------------------------------------
+  # 7. DEVELOPMENT & STAGING SMTP MAILCATCHER
+  # ----------------------------------------------------------------------------
+  penpot-mailcatch:
+    image: sj26/mailcatcher:latest
+    container_name: penpot-enterprise-mailcatch
+    restart: always
+    expose:
+      - '1025'
+    ports:
+      - "${MAILCATCHER_PORT:-1080}:1080"
+    networks:
+      - penpot-enterprise
