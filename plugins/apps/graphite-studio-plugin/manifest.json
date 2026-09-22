@@ -1,0 +1,8 @@
+{
+  "name": "Graphite Procedural & Filter Studio",
+  "version": 2,
+  "code": "assets/plugin.js",
+  "icon": "assets/icon.svg",
+  "description": "Procedural vector generators (spirals, radial arrays, harmonic waves) and non-destructive image filters (Levels, Curves, Hue/Sat) infused from Graphite.",
+  "permissions": ["content:read", "content:write"]
+}

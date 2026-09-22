@@ -1,0 +1,11 @@
+{
+  "name": "grida-code-compiler-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm run build:plugin && pnpm run build:ui",
+    "build:plugin": "node ../../tools/scripts/build-plugin.mjs --plugin=grida-code-compiler-plugin",
+    "build:ui": "esbuild src/main.ts --bundle --outfile=src/assets/main.js --minify --format=iife"
+  }
+}

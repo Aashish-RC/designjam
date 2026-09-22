@@ -3,6 +3,8 @@ import { AsyncLocalStorage } from "async_hooks";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { ExecuteCodeTool } from "./tools/ExecuteCodeTool";
+import { ProceduralGeneratorTool } from "./tools/ProceduralGeneratorTool";
+import { GenerateFrameworkCodeTool } from "./tools/GenerateFrameworkCodeTool";
 import { PluginBridge } from "./PluginBridge";
 import { RedisBridge } from "./RedisBridge";
 import { ConfigurationLoader } from "./ConfigurationLoader";
@@ -212,6 +214,8 @@ export class PenpotMcpServer {
     private initTools(): ToolInfo[] {
         const toolInstances: Tool<any>[] = [
             new ExecuteCodeTool(this),
+            new ProceduralGeneratorTool(this),
+            new GenerateFrameworkCodeTool(this),
             new HighLevelOverviewTool(this),
             new PenpotApiInfoTool(this, this.apiDocs),
             new ExportShapeTool(this),
@@ -325,7 +329,7 @@ export class PenpotMcpServer {
                 transport = new StreamableHTTPServerTransport({
                     // For an adopted session, reuse the existing ID; otherwise generate a new one.
                     sessionIdGenerator: () => (isAdoptedSession ? sessionId! : randomUUID()),
-                    onsessioninitialized: (id) => {
+                    onsessioninitialized: (id: string) => {
                         this.streamableTransports[id] = new StreamableSession(transport, userToken, Date.now());
                         this.logger.info(
                             `Session initialized with id=${id} for userTokenFp=${PenpotMcpServer.tokenFingerprint(userToken)}; total sessions: ${Object.keys(this.streamableTransports).length}`

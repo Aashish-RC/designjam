@@ -1,0 +1,8 @@
+{
+  "name": "Grida Design-to-Code Studio",
+  "version": 2,
+  "code": "/assets/plugin.js",
+  "icon": "/assets/icon.svg",
+  "description": "Production design-to-code compiler generating React (TSX + Tailwind), Flutter (Dart), and Svelte components directly from Penpot selections.",
+  "permissions": ["content:read"]
+}

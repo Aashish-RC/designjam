@@ -10,6 +10,9 @@
 .cpcache
 .lsp
 .env
+.env.*
+!.env*.example
+docker/enterprise/.env.enterprise
 .nrepl-port
 .nyc_output
 .rebel_readline_history
@@ -104,3 +107,33 @@ opencode.json
 /.ci-logs
 /.codex/
 /tools/__pycache__
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+.DS_Store
+
+# Temporary scratch and test files
+/scratch/
+/temp/
+/.temp/
+
+# Build and package manager logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# TypeScript build info and caches
+*.tsbuildinfo
+.wireit/
+.turbo/
+
+# AI and IDE artifacts
+.gemini/
+.antigravity/
+.agents/
+

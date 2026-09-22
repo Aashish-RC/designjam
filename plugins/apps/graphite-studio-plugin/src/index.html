@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Graphite Procedural & Filter Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="studio-container">
+      <!-- Header -->
+      <header class="studio-header">
+        <div class="studio-brand">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="m4.93 4.93 4.24 4.24"></path>
+            <path d="m14.83 9.17 4.24-4.24"></path>
+            <path d="m14.83 14.83 4.24 4.24"></path>
+            <path d="m9.17 14.83-4.24 4.24"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>Graphite Studio</span>
+          <span class="brand-badge">Procedural</span>
+        </div>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button class="tab-btn active" data-tab="tab-spirals">Spirals</button>
+        <button class="tab-btn" data-tab="tab-radials">Radial Arrays</button>
+        <button class="tab-btn" data-tab="tab-waves">Harmonic Waves</button>
+        <button class="tab-btn" data-tab="tab-filters">Raster Filters</button>
+      </nav>
+
+      <!-- Live Canvas Preview Box -->
+      <div class="preview-box">
+        <div class="preview-badge">LIVE VECTOR PREVIEW</div>
+        <div class="preview-svg-wrapper" id="preview-container">
+          <!-- Live SVG injected here -->
+        </div>
+      </div>
+
+      <!-- Tab 1: Spirals -->
+      <div class="tab-content active" id="tab-spirals">
+        <div class="controls-card">
+          <div class="control-row">
+            <label class="control-label">Spiral Algorithm</label>
+            <div class="segmented-group" id="spiral-type-group">
+              <button class="segment-btn active" data-type="archimedean">Archimedean</button>
+              <button class="segment-btn" data-type="logarithmic">Logarithmic</button>
+              <button class="segment-btn" data-type="fibonacci">Fibonacci</button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Turns / Revolutions</span><span class="control-value" id="val-spiral-turns">4.5</span></div>
+            <input type="range" id="param-spiral-turns" min="1" max="12" step="0.5" value="4.5" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Radius (px)</span><span class="control-value" id="val-spiral-radius">80</span></div>
+            <input type="range" id="param-spiral-radius" min="30" max="150" step="5" value="80" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Sample Density / Points</span><span class="control-value" id="val-spiral-points">220</span></div>
+            <input type="range" id="param-spiral-points" min="50" max="600" step="10" value="220" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Stroke & Color</span></div>
+            <div class="color-input-wrapper">
+              <input type="color" id="param-spiral-color" value="#0ea5e9" />
+              <input type="range" id="param-spiral-width" min="1" max="8" step="0.5" value="2.5" />
+              <span class="control-value" id="val-spiral-width">2.5px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Radial Arrays -->
+      <div class="tab-content" id="tab-radials">
+        <div class="controls-card">
+          <div class="control-row">
+            <label class="control-label">Repetition Geometry</label>
+            <div class="segmented-group" id="radial-type-group">
+              <button class="segment-btn active" data-shape="petal">Petal</button>
+              <button class="segment-btn" data-shape="circle">Circle</button>
+              <button class="segment-btn" data-shape="capsule">Capsule</button>
+              <button class="segment-btn" data-shape="spoke">Spoke</button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Element Count (Symmetry)</span><span class="control-value" id="val-radial-count">16</span></div>
+            <input type="range" id="param-radial-count" min="3" max="48" step="1" value="16" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Inner Radius (Hub)</span><span class="control-value" id="val-radial-inner">25</span></div>
+            <input type="range" id="param-radial-inner" min="0" max="80" step="5" value="25" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Outer Radius</span><span class="control-value" id="val-radial-outer">85</span></div>
+            <input type="range" id="param-radial-outer" min="40" max="150" step="5" value="85" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Theme Colors</span></div>
+            <div class="color-input-wrapper">
+              <input type="color" id="param-radial-fill" value="#8b5cf6" />
+              <input type="color" id="param-radial-stroke" value="#0ea5e9" />
+              <span class="control-value">Fill / Stroke</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Harmonic Waves -->
+      <div class="tab-content" id="tab-waves">
+        <div class="controls-card">
+          <div class="control-row">
+            <div class="control-label"><span>Wave Strands Count</span><span class="control-value" id="val-wave-count">4</span></div>
+            <input type="range" id="param-wave-count" min="1" max="8" step="1" value="4" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Frequency (Cycles)</span><span class="control-value" id="val-wave-freq">2.2</span></div>
+            <input type="range" id="param-wave-freq" min="0.5" max="6" step="0.1" value="2.2" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Wave Amplitude</span><span class="control-value" id="val-wave-amp">35</span></div>
+            <input type="range" id="param-wave-amp" min="10" max="70" step="2" value="35" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Wave Colors</span></div>
+            <div class="color-input-wrapper">
+              <input type="color" id="param-wave-stroke" value="#06b6d4" />
+              <input type="color" id="param-wave-fill" value="#0ea5e9" />
+              <label style="margin-left: 8px; font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                <input type="checkbox" id="param-wave-hasfill" checked /> Shaded Fill
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Raster Filters -->
+      <div class="tab-content" id="tab-filters">
+        <div class="controls-card">
+          <div class="control-row">
+            <div class="control-label"><span>Tone Levels: Highlights</span><span class="control-value" id="val-filter-high">1.0</span></div>
+            <input type="range" id="param-filter-high" min="0.4" max="1.0" step="0.05" value="1.0" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Tone Levels: Gamma (Midtones)</span><span class="control-value" id="val-filter-gamma">1.0</span></div>
+            <input type="range" id="param-filter-gamma" min="0.2" max="2.5" step="0.05" value="1.0" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Hue Rotation</span><span class="control-value" id="val-filter-hue">0°</span></div>
+            <input type="range" id="param-filter-hue" min="-180" max="180" step="5" value="0" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-label"><span>Saturation Multiplier</span><span class="control-value" id="val-filter-sat">1.4</span></div>
+            <input type="range" id="param-filter-sat" min="0" max="3.0" step="0.1" value="1.4" />
+          </div>
+
+          <div class="control-row" style="flex-direction: row; gap: 12px; margin-top: 4px;">
+            <label style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
+              <input type="checkbox" id="param-filter-invert" /> Invert Colors
+            </label>
+            <label style="font-size: 11px; display: flex; align-items: center; gap: 4px;">
+              <input type="checkbox" id="param-filter-threshold" /> High-Pass Threshold
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <footer class="action-bar">
+        <button class="btn-secondary" id="btn-export-svg" title="Copy clean SVG code to clipboard">Copy SVG</button>
+        <button class="btn-primary" id="btn-insert-canvas">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Insert to Canvas</span>
+        </button>
+      </footer>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>

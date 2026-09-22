@@ -1,6 +1,7 @@
 use skia_safe as skia;
 
 pub mod bools;
+pub mod curves;
 
 pub type Rect = skia::Rect;
 pub type Matrix = skia::Matrix;

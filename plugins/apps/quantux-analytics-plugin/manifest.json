@@ -1,0 +1,8 @@
+{
+  "name": "Quant-UX Usability & Heatmap Lab",
+  "version": 2,
+  "code": "assets/plugin.js",
+  "icon": "assets/icon.svg",
+  "description": "Visual click & touch heatmaps, user journey conversion funnels, and A/B prototype testing analytics infused from Quant-UX.",
+  "permissions": ["content:read", "content:write"]
+}

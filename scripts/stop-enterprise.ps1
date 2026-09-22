@@ -4,7 +4,7 @@
 #>
 
 param (
-    [switch]$Volumes = $false
+    [switch]$Volumes
 )
 
 $ErrorActionPreference = "Stop"

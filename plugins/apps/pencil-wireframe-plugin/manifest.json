@@ -1,0 +1,8 @@
+{
+  "name": "Pencil Wireframe & Flowchart Studio",
+  "version": 2,
+  "code": "assets/plugin.js",
+  "icon": "assets/icon.svg",
+  "description": "Low-fidelity sketchy wireframe stencils and smart diagramming connectors infused from Open-Pencil.",
+  "permissions": ["content:read", "content:write"]
+}
