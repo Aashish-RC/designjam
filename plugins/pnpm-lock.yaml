@@ -208,9 +208,15 @@ importers:
 
   apps/example-styles: {}
 
+  apps/graphite-studio-plugin: {}
+
+  apps/grida-code-compiler-plugin: {}
+
   apps/icons-plugin: {}
 
   apps/lorem-ipsum-plugin: {}
+
+  apps/pencil-wireframe-plugin: {}
 
   apps/plugin-api-test-suite:
     devDependencies:
@@ -221,6 +227,8 @@ importers:
   apps/poc-state-plugin: {}
 
   apps/poc-tokens-plugin: {}
+
+  apps/quantux-analytics-plugin: {}
 
   apps/rename-layers-plugin: {}
 

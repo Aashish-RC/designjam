@@ -4,6 +4,7 @@ export interface SelectionMessage {
   type: 'selection-change';
   content: {
     selectedNode: NodeLayout | null;
+    isSample?: boolean;
   };
 }
 

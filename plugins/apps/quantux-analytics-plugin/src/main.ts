@@ -73,14 +73,14 @@ btnOverlay.addEventListener('click', () => {
       type: 'overlay-heatmap',
       content: {
         svg: currentHeatmapSvg,
-        boardName: 'Quant-UX Usability Heatmap',
+        boardName: 'Demo Preview Usability Heatmap',
       },
     },
     '*'
   );
 
   const orig = btnOverlay.textContent;
-  btnOverlay.textContent = 'Heatmap Overlaid on Canvas!';
+  btnOverlay.textContent = 'Demo Heatmap Overlaid on Canvas!';
   setTimeout(() => {
     btnOverlay.textContent = orig;
   }, 1400);

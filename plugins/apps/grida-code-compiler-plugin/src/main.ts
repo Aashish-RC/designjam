@@ -54,10 +54,28 @@ btnCopy.addEventListener('click', async () => {
   }
 });
 
+const selectionStatus = document.getElementById('selection-status') as HTMLElement;
+const statusBadge = document.getElementById('status-badge') as HTMLElement;
+const statusText = document.getElementById('status-text') as HTMLElement;
+
 // Listen to message from plugin.ts
 window.addEventListener('message', (event) => {
   if (event.data?.type === 'selection-change') {
     currentNode = event.data.content?.selectedNode || null;
+    const isSample = Boolean(event.data.content?.isSample);
+
+    if (selectionStatus && statusBadge && statusText) {
+      if (isSample) {
+        selectionStatus.classList.remove('live');
+        statusBadge.textContent = 'Preview';
+        statusText.textContent = 'No shape selected — displaying sample. Select any frame or layer to compile.';
+      } else {
+        selectionStatus.classList.add('live');
+        statusBadge.textContent = 'Canvas';
+        statusText.textContent = `Compiling live selection: ${currentNode?.name || 'Selected Layer'}`;
+      }
+    }
+
     renderCode();
   }
 });

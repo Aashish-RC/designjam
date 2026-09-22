@@ -15,6 +15,8 @@ import {
 let activeTab = 'tab-spirals';
 let currentGeneratedSvg = '';
 let currentShapeName = 'Graphite Procedural Spiral';
+let currentFilterId = '';
+let currentFilterDef = '';
 
 // DOM References
 const previewContainer = document.getElementById('preview-container') as HTMLElement;
@@ -32,6 +34,12 @@ document.querySelectorAll('.tab-btn').forEach((btn) => {
     const targetContent = document.getElementById(activeTab);
     if (targetContent) {
       targetContent.classList.add('active');
+    }
+
+    if (activeTab === 'tab-filters') {
+      btnInsert.innerHTML = `<span>Apply Filter to Selection</span>`;
+    } else {
+      btnInsert.innerHTML = `<span>Insert Into Penpot Canvas</span>`;
     }
 
     renderActivePreview();
@@ -190,6 +198,8 @@ function renderActivePreview() {
 
     const filterId = 'graphite-tone-filter';
     const filterDef = buildSvgFilterDef(filterId, filterOpts);
+    currentFilterId = filterId;
+    currentFilterDef = filterDef;
     currentShapeName = 'Graphite Raster Filter';
     currentGeneratedSvg = createFilteredDemonstrationSvg(filterId, filterDef);
   }
@@ -200,8 +210,45 @@ function renderActivePreview() {
   }
 }
 
-// Insert into Penpot Canvas Action
+const feedbackBanner = document.getElementById('feedback-banner') as HTMLElement;
+
+function showNotification(msg: string) {
+  if (!feedbackBanner) return;
+  feedbackBanner.textContent = msg;
+  feedbackBanner.style.display = 'block';
+  if (msg.startsWith('✓')) {
+    feedbackBanner.classList.add('success');
+  } else {
+    feedbackBanner.classList.remove('success');
+  }
+  setTimeout(() => {
+    feedbackBanner.style.display = 'none';
+  }, 3500);
+}
+
+// Insert into Penpot Canvas Action / Apply Filter Action
 btnInsert.addEventListener('click', () => {
+  if (activeTab === 'tab-filters') {
+    // Dispatch apply-filter to target active selection
+    parent.postMessage(
+      {
+        type: 'apply-filter',
+        content: {
+          filterId: currentFilterId,
+          filterSvg: currentFilterDef,
+        },
+      },
+      '*'
+    );
+
+    const originalHtml = btnInsert.innerHTML;
+    btnInsert.innerHTML = `<span>Applying to Selection...</span>`;
+    setTimeout(() => {
+      btnInsert.innerHTML = originalHtml;
+    }, 1200);
+    return;
+  }
+
   if (!currentGeneratedSvg) return;
 
   // Send message to Penpot host thread (plugin.ts)
@@ -239,10 +286,12 @@ btnCopySvg.addEventListener('click', async () => {
   }
 });
 
-// Handle Theme Synchronization from Penpot
+// Handle Theme & Notifications from Penpot
 window.addEventListener('message', (event) => {
   if (event.data?.type === 'theme') {
     console.log('[Graphite Plugin] Penpot theme updated:', event.data.content);
+  } else if (event.data?.type === 'notification') {
+    showNotification(event.data.content);
   }
 });
 

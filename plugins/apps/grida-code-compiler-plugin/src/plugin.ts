@@ -123,9 +123,10 @@ function sendCurrentSelection() {
     };
   }
 
+  const hasSelection = Boolean(selection && selection.length > 0);
   penpot.ui.sendMessage({
     type: 'selection-change',
-    content: { selectedNode },
+    content: { selectedNode, isSample: !hasSelection },
   } as PluginMessageEvent);
 }
 

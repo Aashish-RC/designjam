@@ -43,6 +43,38 @@ body {
   padding-bottom: 8px;
 }
 
+.selection-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: #7dd3fc;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+}
+
+.selection-status.live {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #6ee7b7;
+}
+
+.status-badge {
+  background: #38bdf8;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.selection-status.live .status-badge {
+  background: #10b981;
+}
+
 .brand {
   display: flex;
   align-items: center;

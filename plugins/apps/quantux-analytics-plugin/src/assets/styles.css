@@ -46,6 +46,29 @@ body {
   padding-bottom: 8px;
 }
 
+.demo-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.demo-badge {
+  background: #f59e0b;
+  color: #000;
+  font-weight: 700;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
 .brand {
   display: flex;
   align-items: center;

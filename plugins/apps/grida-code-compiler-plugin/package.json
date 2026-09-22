@@ -6,6 +6,7 @@
   "scripts": {
     "build": "pnpm run build:plugin && pnpm run build:ui",
     "build:plugin": "node ../../tools/scripts/build-plugin.mjs --plugin=grida-code-compiler-plugin",
-    "build:ui": "esbuild src/main.ts --bundle --outfile=src/assets/main.js --minify --format=iife"
+    "build:ui": "esbuild src/main.ts --bundle --outfile=src/assets/main.js --minify --format=iife",
+    "test": "node --experimental-strip-types src/compiler/compiler.test.mjs"
   }
 }

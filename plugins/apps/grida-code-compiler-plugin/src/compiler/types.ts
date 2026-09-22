@@ -24,5 +24,6 @@ export interface NodeLayout {
   borderWidth?: number;
   textContent?: string;
   opacity?: number;
+  shadow?: string;
   children?: NodeLayout[];
 }
